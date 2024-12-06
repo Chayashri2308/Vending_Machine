@@ -47,3 +47,48 @@ module vending_machine(
         end
     end
 endmodule
+
+//Testbench to simulate Parking Management System
+module vending_machine_tb;
+    reg clk;
+    reg reset;
+    reg [1:0] currency;
+    reg buy;
+    wire dispense;
+    wire [3:0] change;
+
+    // Instantiate the vending_machine module
+    vending_machine vm (
+        .clk(clk),
+        .reset(reset),
+        .currency(currency),
+        .buy(buy),
+        .dispense(dispense),
+        .change(change)
+    );
+
+    // Clock generation
+    always #5 clk = ~clk;
+
+    initial begin
+        // Initialize inputs
+        clk = 0;
+        reset = 1;
+        currency = 2'b00;
+        buy = 0;
+
+        // Apply reset
+        #10 reset = 0;
+
+        // Insert currency and try to buy the product
+        currency = 2'b01; // Insert 2 units
+        #10 currency = 2'b10; // Insert 5 units
+        #10 buy = 1; // Press buy
+        #10 buy = 0; // Release buy
+
+        // Check output and change
+        #10 currency = 2'b00; // No currency inserted
+
+        #50 $finish;
+    end
+endmodule
